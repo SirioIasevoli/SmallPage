@@ -1,0 +1,90 @@
+<script>
+    $(document).ready(function() {
+        person_detail.init();
+    });
+
+    let person_detail = {
+        init: function() {
+            $('#friends_title').addClass('d-none');    
+            $('#cities_title').addClass('d-none');  
+            $('#current_person').html("the social graph to have everyone under control").addClass('text-capitalize');
+            $('#initial_logo').removeClass('d-none');
+            $('#persons').off('change').on('change', function() {
+                $('#friends_cards').html("");
+                $('#cities_cards').html("");
+                $('#current_person').html('');
+                if($(this).val() == '') {
+                    $('#person_detail').addClass('d-none');
+                    $('#friend_info').html('');
+                    $('#city_info').html('');
+                    $('#friends_title').addClass('d-none');
+                    $('#cities_title').addClass('d-none');
+                    $('#initial_logo').removeClass('d-none');
+                } else {
+                    $('#person_detail').removeClass('d-none');
+                    $('#friends_title').removeClass('d-none');
+                    $('#cities_title').removeClass('d-none');
+                }
+            })
+            $('#person_detail').off('click').on('click', function() {
+                let person_id = $('#persons option:selected').val();
+                person_detail.populateData(person_id);
+            });
+        },
+
+        populateData: function(id) {
+            $.ajax({
+                url: "{{ url('persons_statistic_url') }}",
+                data : {"id" : id},
+                type: "GET",
+                success: function(res) {
+                    $('#friends_cards').html("");
+                    $('#cities_cards').html("");
+                    $('#current_person').html(`${res['person'].name} ${res['person'].surname} Details`);
+                    
+                    res['friends_data'].forEach(friend=> {
+                        $('#friends_cards').append(`
+                            <div class="card bg-info mb-3 mx-1" style="min-width: 30%; max-width: 50%">
+                                <div class="card-header bg-warning">${friend.name} ${friend.surname}</div>
+                                <div class="card-body bg-info">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item bg-info">Age: ${friend.age == null ? 'ND' : friend.age}</li>
+                                        <li class="list-group-item bg-info">Gender: ${friend.gender}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `);
+                    });
+                    
+                    res['visit_data'].forEach(visit=> {
+                        $('#cities_cards').append(`
+                            <div class="card mb-3 mx-1" style="min-width: 30%; max-width: 50%">
+                                <img class="card-img-top img-thumbnail rounded" src="https://picsum.photos/id/${Math.floor((Math.random() * 70) + 1)}/200/300" alt="${visit.city_name} image" style="width:auto; height:40%;">
+                                <div class="card-body bg-info">
+                                    <h5 class="card-title">${visit.city_name}</h5>
+                                    <div>Visit percentage: ${visit.percentage}%</div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: ${visit.percentage}%" aria-valuenow="${visit.percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `); 
+                    });
+                    $('#friend_info').html(`
+                        <a href="{{ url('friends_suggestions_url') }}/${res['person'].id}" class="btn btn-small btn-success" id="friend_suggestion">See friends suggestions</a>
+                    `);
+                    $('#city_info').html(`
+                        <a href="{{ url('cities_suggestions_url') }}/${res['person'].id}" class="btn btn-small btn-success" id="city_suggestion">See cities suggestions</a>
+                    `);  
+                    $('#friends_title').removeClass('d-none');    
+                    $('#cities_title').removeClass('d-none');
+                    $('#initial_logo').addClass('d-none');    
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            })
+        },
+    }
+
+</script>

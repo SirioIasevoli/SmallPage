@@ -1,0 +1,60 @@
+{% include "@App/includes/layout.html.twig" %}
+
+{% block main %}
+    <main>
+    <div class="container text-center">
+        <div class="col my-3">
+            <h2 class="text-center">Friends Suggestion</h2>
+            <div class="col-6 offset-3">
+                <a href="{{url('persons_url')}}" class="btn btn-small btn-warning mx-2">Back to homepage</a>
+                <a href="{{url('cities_suggestions_url')}}/{{person_id}}" class="btn btn-small btn-primary mx-2">See suggested cities</a>
+            </div>
+        </div>
+        <h3 class="text-center">Suggested Friends (friends of 2+ friends)</h3>
+        <div class="col-8 offset-2 d-flex justify-content-between">
+            {% for friend in close_friends if close_friends is defined %}
+                <div class="card" style="width: 18rem;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text-center bg-info"> <h5>{{friend.name}} {{ friend.surname}}</h5></li>
+                        <li class="list-group-item bg-secondary">Age: {{ friend.age is null ? 'ND' : friend.age }}</li>
+                        <li class="list-group-item bg-secondary">Gender: {{ friend.gender }}</li>
+                    </ul>
+                </div>
+            {% else %}
+                <div class="col-12 my-5 text-center text-danger">No suggested friends</div>
+            {% endfor %}
+        </div>
+        <h3 class="text-center">Friends of Friends (only one friend in common)</h3>
+        
+        <div class="col-8 offset-2 d-flex justify-content-between flex-wrap">
+            {% for friend in friends %}
+                <div class="card my-3" style="width: 18rem;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text-center bg-success"> <h5>{{friend.name}} {{ friend.surname}}</h5></li>
+                        <li class="list-group-item bg-secondary">Age: {{ friend.age is null ? 'ND' : friend.age }}</li>
+                        <li class="list-group-item bg-secondary">Gender: {{ friend.gender }}</li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="text-center">Maybe known people (no direct suggestion)</h3>
+        
+        <div class="col-8 offset-2 d-flex justify-content-between flex-wrap">
+            {% for friend in friends_of_friends %}
+                <div class="card my-3" style="width: 18rem;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item text-center bg-danger"> <h5>{{friend.name}} {{ friend.surname}}</h5></li>
+                        <li class="list-group-item bg-secondary">Age: {{ friend.age is null ? 'ND' : friend.age }}</li>
+                        <li class="list-group-item bg-secondary">Gender: {{ friend.gender }}</li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+        
+        
+        
+    </main>
+
+{% endblock %}

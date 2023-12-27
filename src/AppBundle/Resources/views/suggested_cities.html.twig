@@ -1,0 +1,27 @@
+{% include '@App/includes/layout.html.twig' %}
+
+{% block main %}
+
+    <div class="container text-center">
+        <h2>Cities Suggested</h2>
+        <div class="col-6 offset-3">
+            <a href="{{url('persons_url')}}" class="btn btn-small btn-warning mx-2">Back to homepage</a>
+            <a href="{{url('friends_suggestions_url')}}/{{person_id}}" class="btn btn-small btn-primary mx-2">See suggested friends</a>
+        </div>
+        
+        <div class="card-group mx-auto d-flex flex-wrap">
+            {% for city in cities if cities is defined%}
+               <div class="card mx-2 my-2 border border-danger">
+                    <img class="card-img-top img-thumbnail" src="{{ city.img }}" alt="Card image cap" style="width:auto; height:50%;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{city.name}}</h5>
+                        <p class="text-center">Affinity : {{city.visit_percent}}%</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center my-5 text-danger">No cities suggested</div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

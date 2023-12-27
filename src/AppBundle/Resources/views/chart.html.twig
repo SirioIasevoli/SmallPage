@@ -1,0 +1,21 @@
+{% include "@App/includes/layout.html.twig" %}
+
+
+{% block main %}
+    <div class="container text-center">
+        <h2>Stats</h2>
+        <div class="col-6 offset-3">
+            <a href="{{url('persons_url')}}" class="btn btn-small btn-warning mx-2">Back to homepage</a>
+        </div>
+        <h3 class="text-center">Visit and Rating per City</h3>
+        <div class="col-12 my-5" id="city-chart"></div>
+        <h3 class="text-center">Friends per Person</h3>
+        <div class="col-12 my-5" id="person-chart"></div>
+        <h3 class="text-center">Visit and Rating per Nation</h3>
+        <div class="col-12 my-5" id="nations-chart"></div>
+    </div>
+
+{% endblock %}
+
+
+{% include "@App/js/chart.js.twig" %}

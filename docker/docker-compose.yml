@@ -1,0 +1,128 @@
+version: '3'
+services:
+  db:
+    build:
+      context: ./db
+    environment:
+      - MYSQL_DATABASE=docker_dev
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
+      - MYSQL_ROOT_PASSWORD=root_psw
+    ports:
+      - '8989:3306'
+    volumes:
+      - './db/data/:/var/lib/mysql'
+    networks:
+      - symfony_dev
+
+  dba:
+   build:
+    context: ./db
+   environment:
+     - MYSQL_DATABASE=docker_dev
+     - MYSQL_USER=dev
+     - MYSQL_PASSWORD=dev
+     - MYSQL_ROOT_PASSWORD=root_psw
+   ports:
+     - '8990:3306'
+   volumes:
+     - './db/dataa/:/var/lib/mysql'
+   networks:
+     - symfony_dev
+
+  php:
+    build:
+      context: ./php
+    environment:
+      - LOKI_MYSQL_HOST=db
+      - LOKI_MYSQL_PORT=3306
+      - LOKI_MYSQL_DATABASE=docker_dev
+      - LOKI_MYSQL_USER=dev
+      - LOKI_MYSQL_PASSWORD=dev
+      - LOKI_REDIS_DNS=redis
+      - LOKI_REDIS_PREFIX=dev_
+      - LOKI_S3_BUCKET=dev-s3
+      - LOKI_MAILER_HOST=mailhog
+      - LOKI_MAILER_PORT=1025
+    volumes:
+      - '../:/var/www'
+      - 'var:/var/www/var/'
+      - 'vendor:/var/www/vendor/'
+      - 'bundles:/var/www/web/bundles/'
+      - 'js:/var/www/web/js/'
+    networks:
+      - symfony_dev
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: ./nginx
+    volumes:
+      - './nginx/nginx.conf:/etc/nginx/nginx.conf'
+      - './nginx/sites/:/etc/nginx/sites-available'
+      - './nginx/conf.d/:/etc/nginx/conf.d'
+      - '../:/var/www'
+      - 'var:/var/www/var/'
+      - 'vendor:/var/www/vendor/'
+      - 'bundles:/var/www/web/bundles/'
+      - 'js:/var/www/web/js/'
+    ports:
+      - '80:80'
+    networks:
+      - symfony_dev
+    depends_on:
+      - php
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8081:80'
+    networks:
+      - symfony_dev
+    depends_on:
+      - db
+    environment:
+      - PMA_HOST=db
+
+  redis:
+    image: redis:4-alpine
+    environment:
+      - REDIS_PASSWORD=redis_pwd
+    command: redis-server --appendonly yes
+    volumes:
+      - './redis/data:/data'
+    networks:
+      - symfony_dev
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025"
+      - "8025:8025"
+    networks:
+      - symfony_dev
+  
+  s3:
+    build:
+      context: ./s3
+    ports:
+      - '5002:5000'
+    environment:
+      - S3_BUCKET_NAME=dev-s3
+    volumes:
+      - './s3/data/:/tmp'
+    networks:
+      - symfony_dev
+
+networks:
+  symfony_dev:
+    ipam:
+      config:
+        - subnet: "172.1.10.0/24"
+
+volumes:
+  bundles:
+  js:
+  vendor:
+  var:

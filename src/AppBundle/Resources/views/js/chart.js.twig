@@ -1,0 +1,160 @@
+<script>
+
+$(document).ready(function() {
+    chart_page.init();
+});
+
+let chart_page= {
+
+    init: function() {
+        chart_page.getCityChart();
+        chart_page.getPersonChart();
+        chart_page.getNationChart();
+    },
+
+    getCityChart: function() {
+        
+        $.ajax({
+            method: 'get',
+            url: "{{ url('cities_names') }}",
+            error: function(e) {
+                alert(e);
+            },
+            success: function(res) {
+
+                let chart = c3.generate({
+                    bindto: '#city-chart',
+                    data: {
+                        url: "{{ url('cities_general_stats_url') }}",
+                        mimeType: 'json',
+                        type: 'bar'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 0.3 // this makes bar width 50% of length between ticks
+                        },
+                        // or
+                        //width: 100 // this makes bar width 100px
+                    },
+                    axis: {
+                        y: {
+                            min:0,
+                            max:10,
+                            label: {
+                              text: 'visits / ratings',
+                              position: 'outer-middle'
+                            },
+                        },
+                        x: {
+                            label: {
+                              text: 'cities',
+                              position: 'outer-center',
+                            },
+                            type: 'category',
+                            categories: res.city_names,
+                            tick: {
+                              centered: true
+                            },
+                        },
+                    }
+                });
+            }
+        })
+    },
+
+    getPersonChart: function() {
+        $.ajax({
+            method: 'get',
+            url: "{{ url('people_names_url') }}",
+            error: function(e) {
+                alert(e);
+            },
+            success: function(res) {
+
+                let chart = c3.generate({
+                    bindto: '#person-chart',
+                    data: {
+                        url: "{{ url('persons_general_stats_url') }}",
+                        mimeType: 'json',
+                        type: 'bar'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 0.3 // this makes bar width 50% of length between ticks
+                        },
+                        // or
+                        //width: 100 // this makes bar width 100px
+                    },
+                    axis: {
+                        y: {
+                            min:0,
+                            max:10,
+                            label: {
+                              text: 'n. friends',
+                              position: 'outer-middle'
+                            },
+                        },
+                        x: {
+                            type: 'category',
+                            categories: res.people_names,
+                            tick: {
+                              centered: true
+                            },
+                        },
+                    }
+
+                });
+
+                
+            }
+        })
+    },
+    getNationChart: function() {
+        $.ajax({
+            method: 'get',
+            url: "{{ url('cities_countries_names_url') }}",
+            error: function(e) {
+                alert(e);
+            },
+            success: function(res) {
+                let chart = c3.generate({
+                    bindto: '#nations-chart',
+                    data: {
+                        url: "{{ url('cities_countries_stats_url') }}",
+                        mimeType: 'json',
+                        type: 'bar'
+                    },
+                    bar: {
+                        width: {
+                            ratio: 0.3 // this makes bar width 50% of length between ticks
+                        },
+                        // or
+                        //width: 100 // this makes bar width 100px
+                    },
+                    axis: {
+                        y: {
+                            min:0,
+                            max:10,
+                            label: {
+                              text: 'visits / rating',
+                              position: 'outer-middle'
+                            },
+                        },
+                        x: {
+                            type: 'category',
+                            categories: res.country_names,
+                            tick: {
+                              centered: true
+                            },
+                        },
+                    }
+
+                });
+
+                
+            }
+        })
+    }
+}
+
+</script>

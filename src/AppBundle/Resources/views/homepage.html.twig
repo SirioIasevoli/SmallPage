@@ -1,0 +1,48 @@
+{% include "@App/includes/layout.html.twig" %}
+
+{% block main %}
+    <main>
+        <div class="container d-flex justify-content-between">
+            <div class="col-4">
+                <div class="col-12 d-flex flex-column align-items-start">
+                    <div class="form-group">
+                        <label for="persons">Choose Person to Check</label>
+                        <select id="persons" class="form-control">
+                            <option value="" selected>Choose...</option>
+                            {% for person in persons %}
+                                <option value="{{person.id}}">{{person.name}} {{person.surname}} </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-small btn-warning d-none" id="person_detail">See Person's Details</button>
+                </div>
+            </div>
+            <div class="col-8" id="person_show">
+                <img src="https://1000logos.net/wp-content/uploads/2016/11/CIA-Emblem.png" alt="cia logo" class="img-fluid" id="initial_logo">
+                <div class="col-8 offset-2 my-5">
+                    <h2 class="text-center" id="current_person"></h2>
+                </div>
+            
+                <div class="col-12">
+                    <h2 class="text-center d-none" id="friends_title">All Friends Information</h2>
+                    <div class="card-deck d-flex justify-content-center flex-wrap" id="friends_cards">
+                    </div>
+                    <div class="col-6 offset-3" id="friend_info"></div>
+                </div>
+                <div class="col-12">
+                    <h2 class="text-center d-none" id="cities_title">All Cities Information</h2>
+                    <div class="card-deck d-flex justify-content-center flex-wrap" id="cities_cards">                        
+                    </div>
+                    <div class="col-6 offset-3" id="city_info"></div>
+                </div>
+            </div>
+        
+        </div>
+    </main>
+    
+
+{% endblock %}
+
+{% block javascript %}
+    {% include "@App/js/homepage.js.twig" %}
+{% endblock %}
